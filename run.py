@@ -19,7 +19,7 @@ resetDebugVisualizerCameraParameter = dict(cameraDistance=1.3, cameraYaw=38, cam
 viewMatrix = p.computeViewMatrix(cameraEyePosition=[0, 0.6, -0.5999], cameraTargetPosition=[0, 0, -0.6], cameraUpVector=[0, 1, 0])
 projectionMatrix = p.computeProjectionMatrixFOV(fov=45, aspect=1.0, nearVal=0.01, farVal=1.6)
 policyMode = 'manual' #'plan'or'manual'
-# policyMode = 'plan' #'plan'or'manual'
+# policyMode = 'plan' #'plan'or'manual'  # Not working now
 
 #################################################################
 # Pybullet init setup

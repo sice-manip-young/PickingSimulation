@@ -20,9 +20,18 @@ pip3 install pybullet --upgrade --user
 pip install attrdict
 ```  
 
-実行:
+実行 :
 ```
 git clone https://github.com/sice-manip-young/PickingSimulation.git
 cd PickingSimulation
 python run.py
 ``` 
+
+バグ :
+* キャプチャした深度画像のスケール
+* (おそらく)↑が原因で推論時に NoValidGraspsException で強制終了
+
+ToDo :
+* 画像ピクセルスケールからメートルスケールへの自動変換
+* 訓練データサンプル用のランダムポリシー
+* 把持成否判定

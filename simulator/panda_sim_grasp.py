@@ -33,10 +33,12 @@ class PandaSim(object):
     center = [0., 0, -0.6]
     self.bullet_client.loadURDF("tray/traybox.urdf", center, [-0.5, -0.5, -0.5, 0.5], flags=flags)
     self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
-    # self.legos.append(self.bullet_client.loadURDF("./data/urdf/block.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.65]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.47]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([-0.12, 0.034, -0.58]), flags=flags))
     self.bullet_client.changeVisualShape(self.legos[0],-1,rgbaColor=[1,0,0,1])
     orn=[-0.707107, 0.0, 0.0, 0.707107]#p.getQuaternionFromEuler([-math.pi/2,math.pi/2,0])
-    self.panda = self.bullet_client.loadURDF("franka_panda/panda.urdf", np.array([0.1,0,0.2]), orn, useFixedBase=True, flags=flags)
+    self.panda = self.bullet_client.loadURDF("franka_panda/panda.urdf", np.array([0.1,0,0]), orn, useFixedBase=True, flags=flags)
     self.bullet_client.setJointMotorControl2(self.panda, 0, self.bullet_client.POSITION_CONTROL, -0.6, force=5 * 240.)
     index = 0
     self.state = 0
@@ -100,8 +102,8 @@ class PandaSim(object):
     
     t = self.t
     self.t += self.control_dt
-    if self.state in [1,2,3,4,7]:
-      pos = [0.2 * math.sin(1.5 * t), self.gripper_default_height, -0.6 + 0.1 * math.cos(1.5 * t)]
+    if self.state in [1,2,3,4,7,8]:
+      # pos = [0.2 * math.sin(1.5 * t), self.gripper_default_height, -0.6 + 0.1 * math.cos(1.5 * t)]
       if self.state == 3:
         pos = self.target_gripper_pos
         pos = [pos[0], self.gripper_default_height, pos[2]]

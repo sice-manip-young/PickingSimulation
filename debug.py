@@ -12,4 +12,5 @@ fig.add_trace(go.Surface(z = depth_image))
 # fig['layout']['scene']['xaxis_autorange'] = 'reversed'
 # fig['layout']['scene']['yaxis_autorange'] = 'reversed'
 fig['layout']['scene']['zaxis_autorange'] = 'reversed'
+fig['layout']['scene']['zaxis']['range'] = (0,1)
 fig.show()

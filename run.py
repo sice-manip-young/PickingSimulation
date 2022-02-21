@@ -17,9 +17,11 @@ modelName = 'GQCNN-2.0'
 modelDir = '/home/yashima/gqcnn/models/'
 resetDebugVisualizerCameraParameter = dict(cameraDistance=1.3, cameraYaw=38, cameraPitch=-22, cameraTargetPosition=[0.35,-0.13,0])
 viewMatrix = p.computeViewMatrix(cameraEyePosition=[0, 0.6, -0.5999], cameraTargetPosition=[0, 0, -0.6], cameraUpVector=[0, 1, 0])
-projectionMatrix = p.computeProjectionMatrixFOV(fov=45, aspect=1.0, nearVal=0.01, farVal=1.6)
-policyMode = 'manual' #'plan'or'manual'
-# policyMode = 'plan' #'plan'or'manual'  # Not working now
+projectionNearVal = 0.006
+projectionFarVal = 0.6
+projectionFov = 45
+# policyMode = 'manual' #'plan'or'manual'
+policyMode = 'plan' #'plan'or'manual'  # Not working now
 
 #################################################################
 # Pybullet init setup
@@ -42,9 +44,10 @@ panda = panda_sim.PandaSimAuto(p)
 panda.control_dt = timeStep
 
 ### Capture camera image
-#Todo: modify image depth
+projectionMatrix = p.computeProjectionMatrixFOV(fov=projectionFov, aspect=1.*captureImageShape[0]/captureImageShape[1], nearVal=projectionNearVal, farVal=projectionFarVal)
 _,_,rgbaImage,depthImage,segmentImage = p.getCameraImage(*captureImageShape, viewMatrix=viewMatrix, projectionMatrix=projectionMatrix)
 depthImage = np.expand_dims(depthImage, -1)
+depthImage = projectionFarVal * projectionNearVal / (projectionFarVal - (projectionFarVal - projectionNearVal) * depthImage)
 segmentImage = np.array(segmentImage*255, np.uint8)
 bgrImage = rgbaImage[:,:,[2,1,0]]
 cv2.imwrite('./data/images/color.png', bgrImage)
@@ -71,7 +74,7 @@ def pxxy2mxy(posPxXY):
 if policyMode == 'plan':
     graspAction = planner.plan(modelName,modelDir,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
     posXY = pxxy2mxy(graspAction.center)
-    posZ = 1 - graspAction.depth
+    posZ = projectionFarVal - projectionNearVal - graspAction.depth
     radZ = graspAction.angle
     policy = [posXY, posZ, radZ]
 elif policyMode == 'manual':

@@ -32,8 +32,8 @@ class PandaSim(object):
     
     center = [0., 0, -0.6]
     self.bullet_client.loadURDF("tray/traybox.urdf", center, [-0.5, -0.5, -0.5, 0.5], flags=flags)
-    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
-    self.legos.append(self.bullet_client.loadURDF("./data/urdf/block.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
+    self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("./data/urdf/block.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
     self.bullet_client.changeVisualShape(self.legos[0],-1,rgbaColor=[1,0,0,1])
     orn=[-0.707107, 0.0, 0.0, 0.707107]#p.getQuaternionFromEuler([-math.pi/2,math.pi/2,0])
     self.panda = self.bullet_client.loadURDF("franka_panda/panda.urdf", np.array([0.1,0,0.2]), orn, useFixedBase=True, flags=flags)

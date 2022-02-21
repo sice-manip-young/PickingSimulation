@@ -1,2 +1,3 @@
-*/data/images/
-*/__pycache__/
+*/data/images/*
+*/data/images/depth.npy
+*/simulator/__pycache__/*

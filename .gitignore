@@ -1,2 +1,2 @@
-*/data/images/*
-*/simulator/__pycache__/*
+*/data/images/
+*/__pycache__/

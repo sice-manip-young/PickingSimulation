@@ -14,7 +14,8 @@ import planner
 timeStep = 1./240.
 captureImageShape = (400,400)
 modelName = 'GQCNN-2.0'
-modelDir = '/home/yashima/gqcnn/models/'
+# baseDir = '/home/yashima/'
+baseDir = '/home/docker/'
 resetDebugVisualizerCameraParameter = dict(cameraDistance=1.3, cameraYaw=38, cameraPitch=-22, cameraTargetPosition=[0.35,-0.13,0])
 viewMatrix = p.computeViewMatrix(cameraEyePosition=[0, 0.6, -0.5999], cameraTargetPosition=[0, 0, -0.6], cameraUpVector=[0, 1, 0])
 projectionNearVal = 0.006
@@ -72,7 +73,7 @@ def pxxy2mxy(posPxXY):
 #if policyMode == 'random':
 #	policy = gen_random_policy(depthImage, segmentImage)
 if policyMode == 'plan':
-    graspAction = planner.plan(modelName,modelDir,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
+    graspAction = planner.plan(baseDir,modelName,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
     posXY = pxxy2mxy(graspAction.center)
     posZ = projectionFarVal - projectionNearVal - graspAction.depth
     radZ = graspAction.angle

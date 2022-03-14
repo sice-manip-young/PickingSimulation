@@ -28,8 +28,8 @@ python run.py
 ``` 
 
 バグ :
-* キャプチャした深度画像のスケール
-* (おそらく)↑が原因で推論時に NoValidGraspsException で強制終了
+* キャプチャした深度画像のスケール (Fix)
+* (おそらく)↑が原因で推論時に NoValidGraspsException で強制終了 (Fix)
 
 ToDo :
 * 画像ピクセルスケールからメートルスケールへの自動変換

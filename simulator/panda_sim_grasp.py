@@ -6,6 +6,7 @@ import time
 from turtle import distance
 import numpy as np
 import math
+import random
 
 useNullSpace = 1
 ikSolver = 0
@@ -22,7 +23,7 @@ jointPositions=[0.98, 0.458, 0.31, -2.24, -0.30, 2.66, 0, 0.02, 0.02]
 rp = jointPositions
 
 class PandaSim(object):
-  def __init__(self, bullet_client):
+  def __init__(self, bullet_client, board_center):
     self.bullet_client = bullet_client
     self.bullet_client.setPhysicsEngineParameter(solverResidualThreshold=0)
     
@@ -30,9 +31,17 @@ class PandaSim(object):
     flags = self.bullet_client.URDF_ENABLE_CACHED_GRAPHICS_SHAPES
     self.legos=[]
     
-    center = [0., 0, -0.6]
-    self.bullet_client.loadURDF("tray/traybox.urdf", center, [-0.5, -0.5, -0.5, 0.5], flags=flags)
-    self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.55]), flags=flags))
+    # self.bullet_client.loadURDF("tray/traybox.urdf", board_center, [-0.5, -0.5, -0.5, 0.5], flags=flags)
+    self.bullet_client.loadURDF("../data/urdf/plane.urdf", board_center[:2]+[board_center[2]], [-0.5, -0.5, -0.5, 0.5], flags=flags)
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]+0.05, board_center[1]+0.034, board_center[2]-0.05]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]+0.05, board_center[1]+0.034, board_center[2]-0.07]), flags=flags))
+    self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]+random.uniform(-0.1,0.1), board_center[1]+0.034, board_center[2]+random.uniform(-0.1,0.1)]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([-0.06, 0.034, -0.65]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]-0.125, board_center[1]+0.034, board_center[2]-0.125]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]+0.2, board_center[1]+0.034, board_center[2]+0.2]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]+0.2, board_center[1]+0.034, board_center[2]-0.2]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]-0.2, board_center[1]+0.034, board_center[2]+0.2]), flags=flags))
+    # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([board_center[0]-0.2, board_center[1]+0.034, board_center[2]-0.2]), flags=flags))
     # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.65]), flags=flags))
     # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([0.05, 0.034, -0.47]), flags=flags))
     # self.legos.append(self.bullet_client.loadURDF("lego/lego.urdf",np.array([-0.12, 0.034, -0.58]), flags=flags))
@@ -44,7 +53,7 @@ class PandaSim(object):
     self.state = 0
     self.control_dt = 1./240.
     self.finger_target = 0
-    self.gripper_default_height = 0.2
+    self.gripper_default_height = board_center[1] +  0.15
     self.gripper_rad = 0
     #create a constraint to keep the fingers centered
     c = self.bullet_client.createConstraint(self.panda,
@@ -123,8 +132,8 @@ class PandaSim(object):
         self.prev_pos = [self.prev_pos[0] - diffX*0.1, self.prev_pos[1], self.prev_pos[2]-diffZ*0.1]
       	
       orn = self.bullet_client.getQuaternionFromEuler([math.pi/2.,0.,0.])
-      self.bullet_client.submitProfileTiming("IK")
-      jointPoses = self.bullet_client.calculateInverseKinematics(self.panda,pandaEndEffectorIndex, pos, orn, ll, ul, jr, rp, maxNumIterations=20)
+      # jointPoses = self.bullet_client.calculateInverseKinematics(self.panda,pandaEndEffectorIndex, pos, orn, maxNumIterations=20)
+      jointPoses = self.bullet_client.calculateInverseKinematics(self.panda,pandaEndEffectorIndex, pos, orn, ll, ul, jr, rp, maxNumIterations=200)
       jointPoses = list(jointPoses)
       jointPoses[6] = self.gripper_rad
       self.bullet_client.submitProfileTiming()
@@ -148,13 +157,13 @@ class PandaSim(object):
 
 
 class PandaSimAuto(PandaSim):
-  def __init__(self, bullet_client):
-    PandaSim.__init__(self, bullet_client)
+  def __init__(self, bullet_client, board_center):
+    PandaSim.__init__(self, bullet_client, board_center)
     self.state_t = 0
     self.state_dt = 0
     self.cur_state = 0
     self.states=[0,3,5,4,6,7,8]
-    self.state_durations=[1.5]*len(self.states)
+    self.state_durations=[1.5,4,1.5,4,1.5,1.5,1.5]
   
   def update_state(self):
     if self.state_t == 0:

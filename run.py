@@ -13,15 +13,19 @@ import planner
 #################################################################
 timeStep = 1./240.
 captureImageShape = (400,400)
+boardCenterPos = [0,0.2,-0.67]
 modelName = 'GQCNN-2.0'
 modelDir = '/home/yashima/gqcnn/models/'
-resetDebugVisualizerCameraParameter = dict(cameraDistance=1.3, cameraYaw=38, cameraPitch=-22, cameraTargetPosition=[0.35,-0.13,0])
-viewMatrix = p.computeViewMatrix(cameraEyePosition=[0, 0.6, -0.5999], cameraTargetPosition=[0, 0, -0.6], cameraUpVector=[0, 1, 0])
-projectionNearVal = 0.006
+resetDebugVisualizerCameraParameter = dict(cameraDistance=0.8, cameraYaw=38, cameraPitch=-22, cameraTargetPosition=boardCenterPos)
+# resetDebugVisualizerCameraParameter = dict(cameraDistance=0.6, cameraYaw=0, cameraPitch=-89, cameraTargetPosition=boardCenterPos)
+# resetDebugVisualizerCameraParameter = dict(cameraDistance=0.6, cameraYaw=89, cameraPitch=-1, cameraTargetPosition=boardCenterPos)
+# resetDebugVisualizerCameraParameter = dict(cameraDistance=0.6, cameraYaw=0, cameraPitch=-10, cameraTargetPosition=boardCenterPos)
 projectionFarVal = 0.6
-projectionFov = 45
+projectionNearVal = boardCenterPos[1] - 0.006
+projectionFov = 40
+viewMatrix = p.computeViewMatrix(cameraEyePosition=[boardCenterPos[0], boardCenterPos[1]+projectionFarVal, boardCenterPos[2]+1e-6], cameraTargetPosition=boardCenterPos, cameraUpVector=[0, 1, 0])
 # policyMode = 'manual' #'plan'or'manual'
-policyMode = 'plan' #'plan'or'manual'  # Not working now
+policyMode = 'plan' #'plan'or'manual'
 
 #################################################################
 # Pybullet init setup
@@ -40,7 +44,7 @@ p.setGravity(0,-9.8,0)
 #################################################################
 # Panda simulator instance init setup
 #################################################################
-panda = panda_sim.PandaSimAuto(p)
+panda = panda_sim.PandaSimAuto(p, boardCenterPos)
 panda.control_dt = timeStep
 
 ### Capture camera image
@@ -57,13 +61,13 @@ cv2.imwrite('./data/images/segmask.png', segmentImage)
 ### Convert 'px' to 'm'
 def pxxy2mxy(posPxXY):
     #Todo: modify to analitical calculation
-	lBottomX = 0.15384
-	uTopY = -0.44654
-	dxDpx = 0.00038461
-	dyDpy = 0.00038461
-	posX = lBottomX - dxDpx * posPxXY[0]
-	posY = uTopY - dyDpy * posPxXY[1]
-	return [posX, posY]
+    posPxXonBoard = posPxXY[0] - 14
+    posPxYonBoard = posPxXY[1] - 14
+    dxDdpx = 0.4/(383-14)
+    dyDdpy = 0.4/(383-14)
+    posX = boardCenterPos[0] - 0.2 + dxDdpx * posPxXonBoard
+    posY = boardCenterPos[2] - 0.2 + dyDdpy * posPxYonBoard
+    return [posX, posY]
 
 #################################################################
 # Generate policy
@@ -74,13 +78,14 @@ def pxxy2mxy(posPxXY):
 if policyMode == 'plan':
     graspAction = planner.plan(modelName,modelDir,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
     posXY = pxxy2mxy(graspAction.center)
-    posZ = projectionFarVal - projectionNearVal - graspAction.depth
+    posZ = boardCenterPos[1] + projectionFarVal - graspAction.depth
     radZ = graspAction.angle
     policy = [posXY, posZ, radZ]
 elif policyMode == 'manual':
-	posXY = pxxy2mxy([400,400])
-	posZ = 0.03
-	radZ = 0.7
+	# posXY = pxxy2mxy([85,83])
+	posXY = pxxy2mxy([200,315])
+	posZ = boardCenterPos[1] + 0.02
+	radZ = 0.
 	policy = [posXY, posZ, radZ]
 panda.set_policy(policy)
 

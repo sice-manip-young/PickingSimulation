@@ -1,4 +1,5 @@
 # Picking Simulation
+## Instllation
 検証済み動作環境 :
 * Ubuntu 18.04
 * python 3.7.7
@@ -20,9 +21,28 @@ pip3 install pybullet --upgrade --user
 pip install attrdict
 ```  
 
-実行:
+実行 :
 ```
 git clone https://github.com/sice-manip-young/PickingSimulation.git
 cd PickingSimulation
 python run.py
 ``` 
+
+バグ :
+* キャプチャした深度画像のスケール
+* (おそらく)↑が原因で推論時に NoValidGraspsException で強制終了
+
+ToDo :
+* 画像ピクセルスケールからメートルスケールへの自動変換
+* 訓練データサンプル用のランダムポリシー
+* 把持成否判定
+
+
+## Docker
+現在NVIDIA GPU搭載PCのみ対応
+docker-compose, nvidia-dockerのインストールが必要
+```
+cd docker
+docker-compose build .
+docker-compose up
+```  

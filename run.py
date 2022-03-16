@@ -11,6 +11,8 @@ import planner
 #################################################################
 # Parameter setup
 #################################################################
+# baseDir = '/home/yashima/'
+baseDir = '/home/docker/'
 timeStep = 1./240.
 captureImageShape = (400,400)
 boardCenterPos = [0,0.2,-0.67]
@@ -76,7 +78,7 @@ def pxxy2mxy(posPxXY):
 #if policyMode == 'random':
 #	policy = gen_random_policy(depthImage, segmentImage)
 if policyMode == 'plan':
-    graspAction = planner.plan(modelName,modelDir,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
+    graspAction = planner.plan(baseDir,modelName,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
     posXY = pxxy2mxy(graspAction.center)
     posZ = boardCenterPos[1] + projectionFarVal - graspAction.depth
     radZ = graspAction.angle

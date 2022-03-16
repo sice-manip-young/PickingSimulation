@@ -22,7 +22,7 @@ from gqcnn.utils import GripperMode
 # Set up logger.
 logger = Logger.get_logger("examples/policy.py")
 
-def plan(base_dir,model_name, depth_filename, segmask_filename, camera_intr):
+def plan(base_dir,model_name, depth_filename, segmask_filename, camera_intr, vis_final_grasp):
     model_dir = base_dir + 'gqcnn/models/'
     config_dir = base_dir + 'gqcnn/'
     
@@ -219,7 +219,7 @@ def plan(base_dir,model_name, depth_filename, segmask_filename, camera_intr):
     logger.info("Planning took %.3f sec" % (time.time() - policy_start))
 
     # Vis final grasp.
-    if policy_config["vis"]["final_grasp"]:
+    if vis_final_grasp:
         vis.figure(size=(10, 10))
         vis.imshow(rgbd_im.depth,
                    vmin=policy_config["vis"]["vmin"],

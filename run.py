@@ -13,6 +13,8 @@ import planner
 #################################################################
 # baseDir = '/home/yashima/'
 baseDir = '/home/docker/'
+# calcMode = p.DIRECT #p.GUI or p.DIRECT
+calcMode = p.GUI #p.GUI or p.DIRECT
 timeStep = 1./240.
 captureImageShape = (400,400)
 boardCenterPos = [0,0.2,-0.67]
@@ -32,7 +34,7 @@ policyMode = 'plan' #'plan'or'manual'
 #################################################################
 # Pybullet init setup
 #################################################################
-p.connect(p.GUI)
+p.connect(calcMode)
 p.configureDebugVisualizer(p.COV_ENABLE_Y_AXIS_UP,1)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI,1)
 p.configureDebugVisualizer(p.COV_ENABLE_DEPTH_BUFFER_PREVIEW,1)
@@ -78,7 +80,7 @@ def pxxy2mxy(posPxXY):
 #if policyMode == 'random':
 #	policy = gen_random_policy(depthImage, segmentImage)
 if policyMode == 'plan':
-    graspAction = planner.plan(baseDir,modelName,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr')
+    graspAction = planner.plan(baseDir,modelName,'./data/images/depth.npy','./data/images/segmask.png','./data/intr/camera.intr',vis_final_grasp=(calcMode==p.GUI))
     posXY = pxxy2mxy(graspAction.center)
     posZ = boardCenterPos[1] + projectionFarVal - graspAction.depth
     radZ = graspAction.angle
@@ -95,7 +97,8 @@ panda.set_policy(policy)
 # Run simulation
 #################################################################
 while True:
-	panda.step()
-	p.stepSimulation()
-	time.sleep(timeStep)
-	panda.bullet_client.submitProfileTiming()
+    status = panda.step()
+    if status == panda_sim.END:
+        break
+    if calcMode == p.GUI:
+        time.sleep(timeStep)

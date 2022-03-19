@@ -1,4 +1,5 @@
 # Picking Simulation
+## Instllation
 検証済み動作環境 :
 * Ubuntu 18.04
 * python 3.7.7
@@ -35,3 +36,13 @@ ToDo :
 * 画像ピクセルスケールからメートルスケールへの自動変換
 * 訓練データサンプル用のランダムポリシー
 * 把持成否判定
+
+
+## Docker
+現在NVIDIA GPU搭載PCのみ対応
+docker-compose, nvidia-dockerのインストールが必要
+```
+cd docker
+docker-compose build
+docker-compose up
+```  

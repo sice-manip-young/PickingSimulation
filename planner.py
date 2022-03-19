@@ -22,7 +22,10 @@ from gqcnn.utils import GripperMode
 # Set up logger.
 logger = Logger.get_logger("examples/policy.py")
 
-def plan(model_name, model_dir, depth_filename, segmask_filename, camera_intr):
+def plan(base_dir,model_name, depth_filename, segmask_filename, camera_intr):
+    model_dir = base_dir + 'gqcnn/models/'
+    config_dir = base_dir + 'gqcnn/'
+    
     # # Parse args.
     # parser = argparse.ArgumentParser(
     #     description="Run a grasping policy on an example image")
@@ -114,20 +117,19 @@ def plan(model_name, model_dir, depth_filename, segmask_filename, camera_intr):
                 "Input data mode {} not supported!".format(input_data_mode))
 
     # Set config.
-    base_dir = '/home/yashima/gqcnn/'
     if config_filename is None:
         if (gripper_mode == GripperMode.LEGACY_PARALLEL_JAW
                 or gripper_mode == GripperMode.PARALLEL_JAW):
             if fully_conv:
-                config_filename = os.path.join(base_dir,"cfg/examples/fc_gqcnn_pj.yaml")
+                config_filename = os.path.join(config_dir,"cfg/examples/fc_gqcnn_pj.yaml")
             else:
-                config_filename = os.path.join(base_dir,"cfg/examples/gqcnn_pj.yaml")
+                config_filename = os.path.join(config_dir,"cfg/examples/gqcnn_pj.yaml")
         elif (gripper_mode == GripperMode.LEGACY_SUCTION
               or gripper_mode == GripperMode.SUCTION):
             if fully_conv:
-                config_filename = os.path.join(base_dir,"cfg/examples/fc_gqcnn_suction.yaml")
+                config_filename = os.path.join(config_dir,"cfg/examples/fc_gqcnn_suction.yaml")
             else:
-                config_filename = os.path.join(base_dir,"cfg/examples/gqcnn_suction.yaml")
+                config_filename = os.path.join(config_dir,"cfg/examples/gqcnn_suction.yaml")
 
     # Read config.
     config = YamlConfig(config_filename)

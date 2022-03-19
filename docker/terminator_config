@@ -1,0 +1,17 @@
+[global_config]
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    custom_command = /bin/zsh
+    scroll_on_output = False
+    scrollback_infinite = True
+    use_custom_command = True

@@ -1,0 +1,23 @@
+services:
+  dex-net:
+    build: .
+    environment:
+     - DISPLAY=$DISPLAY
+     - LOCAL_USER_ID=1000
+     - QT_X11_NO_MITSHM=1
+     - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+     - /tmp/.X11-unix:/tmp/.X11-unix:rw
+     - ../.:/home/docker/PickingSimulation
+    privileged: true
+    network_mode: "host"
+    tty: true
+    container_name: dex-net-env
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: terminator

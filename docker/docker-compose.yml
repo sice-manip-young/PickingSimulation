@@ -8,6 +8,7 @@ services:
      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+     - ../.:/home/docker/PickingSimulation
     privileged: true
     network_mode: "host"
     tty: true

@@ -43,6 +43,6 @@ ToDo :
 docker-compose, nvidia-dockerのインストールが必要
 ```
 cd docker
-docker-compose build .
+docker-compose build
 docker-compose up
 ```  
